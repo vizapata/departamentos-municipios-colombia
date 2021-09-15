@@ -9,7 +9,7 @@
  * Plugin Name:       Departamentos y Municipios Colombia
  * Plugin URI:        https://github.com/vizapata/departamentos-municipios-colombia
  * Description:       Provides a list of states and cities of Colombia to be used by other plugins
- * Version:           1.0.1
+ * Version:           1.2.0
  * Author:            Victor Zapata
  * Author URI:        https://github.com/vizapata
  * License:           GPL-3.0
@@ -8272,6 +8272,15 @@ function dmcol_get_state_by_name($state_name)
   return isset($list[$state_name]) ? $list[$state_name] : false;
 }
 
+function dmcol_get_state_by_abbr($abbr)
+{
+  $list = dmcol_all_states();
+  foreach ($list as $state) {
+    if ($state['abbr'] == $abbr) return $state;
+  }
+  return false;
+}
+
 function dmcol_get_city_by_state_and_name($state_name, $city_name)
 {
   $state = dmcol_get_state_by_name($state_name);
@@ -8281,6 +8290,17 @@ function dmcol_get_city_by_state_and_name($state_name, $city_name)
 function dmcol_get_state_and_city_by_name($state_name, $city_name)
 {
   $state = dmcol_get_state_by_name($state_name);
+  return $state !== false && isset($state['cities'][$city_name]) ? array(
+    'state_name' => $state['name'],
+    'state_code' => $state['code'],
+    'city_code' => $state['cities'][$city_name]['code'],
+    'city_name' => $state['cities'][$city_name]['name'],
+  ) : false;
+}
+
+function dmcol_get_state_and_city_by_abbr_and_name($abbr, $city_name)
+{
+  $state = dmcol_get_state_by_abbr($abbr);
   return $state !== false && isset($state['cities'][$city_name]) ? array(
     'state_name' => $state['name'],
     'state_code' => $state['code'],
